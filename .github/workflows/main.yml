@@ -1,0 +1,56 @@
+name: Demo Snyk with Python app
+on: workflow_dispatch
+jobs:
+          
+  SCA:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@master
+        
+      - uses: snyk/actions/setup@master
+  
+      - name: Test dependencies with Snyk
+        run: snyk test
+        env:
+          SNYK_TOKEN: ${{secrets.SNYK_TOKEN}}
+          with: --unmanaged
+        continue-on-error: true
+      - name: Monitor dependencies for security issues with Snyk
+        run: snyk monitor
+        env:
+          SNYK_TOKEN: ${{secrets.SNYK_TOKEN}}
+          
+  SAST:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@master   
+      
+      - name: Run Snyk to check for vulnerabilities
+        uses: snyk/actions/python@master
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+        with:
+          args: --code 
+        continue-on-error: true
+        
+      - run: npm install snyk-to-html -g
+    
+      - name: Generating json with results
+        uses: snyk/actions/python@master
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+        with:
+          args: --code --json > results.json
+        continue-on-error: true
+          
+      - name: Convert Snyk Json to html report
+        run: snyk-to-html -i results.json -o results.html
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+      
+      - name: Upload Snyk Results Artifact
+        uses: actions/upload-artifact@master
+        with:
+          name: results.html
+          path: results.html
