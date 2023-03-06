@@ -16,6 +16,11 @@ jobs:
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
           
+      - name: Sending results to UI
+        run: snyk monitor --unamanged --remote-repo-url='App4-team' --project-name='CPP-demo'
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+          
   SAST:
     runs-on: ubuntu-latest
     steps:
