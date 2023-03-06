@@ -18,7 +18,7 @@ jobs:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
           
       - name: Sending results to UI
-        run: snyk monitor --unmanaged --remote-repo-url='App4-team' --project-name='CPP-demo'
+        run: snyk monitor --unmanaged --remote-repo-url='CPP-demo-repo' --project-name='CPP-demo'
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
           
